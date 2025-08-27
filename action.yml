@@ -34,7 +34,7 @@ runs:
       shell: bash
       run: |
         cd source-temp
-        mvn -B -q dependency:tree -DoutputType=dot > source-dependency-tree.txt 2>&1
+        mvn -B dependency:tree -DoutputType=dot > source-dependency-tree.txt 2>&1
 
     - name: Checkout target branch
       if : ${{ github.base_ref != '' }}
@@ -48,7 +48,7 @@ runs:
       shell: bash
       run: |
         cd target-temp
-        mvn -B -q dependency:tree -DoutputType=dot > target-dependency-tree.txt 2>&1
+        mvn -B dependency:tree -DoutputType=dot > target-dependency-tree.txt 2>&1
 
     - name: Detect PR introduced vulnerabilities
       uses: eduard-tita/hackaton@main
@@ -63,5 +63,5 @@ runs:
       with:
         name: dependency-trees
         path: |
-          source-temp/*
-          target-temp/*
+          source-temp/*-dependency-tree.txt
+          target-temp/*-dependency-tree.txt
