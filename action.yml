@@ -58,10 +58,10 @@ runs:
         APP_ID: ${{ inputs.iq-app-id }}
         GITHUB_TOKEN: ${{ github.token }}
 
-    - name: 'Upload artifacts (for troubleshooting only)'
-      uses: actions/upload-artifact@v4
-      with:
-        name: dependency-trees
-        path: |
-          source-temp/*-dependency-tree.txt
-          target-temp/*-dependency-tree.txt
+#    - name: 'Upload artifacts (for troubleshooting only)'
+#      uses: actions/upload-artifact@v4
+#      with:
+#        name: dependency-trees
+#        path: |
+#          source-temp/*-dependency-tree.txt
+#          target-temp/*-dependency-tree.txt
