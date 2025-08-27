@@ -1,0 +1,63 @@
+name: 'PR Protector'
+description: 'A lightweight approach for protecting your PR from introducing unintended vulnerabilities'
+author: 'Sonatype'
+
+# Add your action's branding here. This will appear on the GitHub Marketplace.
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+# Define your inputs here.
+inputs:
+  iq-username:
+    description: 'The username to authenticate with Lifecycle (IQ Server).'
+    required: true
+  iq-password:
+    description: 'The password to authenticate with Lifecycle (IQ Server).'
+    required: true
+  gh-token:
+    description: 'GitHub token; usually available in every workflow as `secrets.GITHUB_TOKEN`.'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Detect maven components on the PR branch - ${{ github.head_ref }}
+      id: dependency_tree_step
+      shell: bash
+      run: |
+        mvn -B dependency:tree -DoutputType=dot > source-dependency-tree.txt 2>&1
+
+    - name: Upload component info for the PR branch - ${{ github.head_ref }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: source-dependency-tree-output
+        path: source-dependency-tree.txt
+        retention-days: 1
+
+    - name: Checkout target branch - ${{ github.base_ref }}
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.base_ref }}
+        path: target-temp
+
+    - name: Detect maven components on the target branch - ${{ github.base_ref }}
+      id: master_dependency_tree_step
+      shell: bash
+      run: |
+        cd target-temp
+        mvn -B dependency:tree -DoutputType=dot > master-dependency-tree.txt 2>&1
+
+    - name: Upload component info for the target branch
+      uses: actions/upload-artifact@v4
+      with:
+        name: master-dependency-tree-output
+        path: target-temp/master-dependency-tree.txt
+        retention-days: 1
+
+    - name: Detect PR introduced vulnerabilities
+      uses: eduard-tita/hackaton@main
+      env:
+        USERNAME: ${{ inputs.iq-username }}
+        PASSWORD: ${{ inputs.iq-password }}
+        GITHUB_TOKEN: ${{ inputs.gh-token }}
