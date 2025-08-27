@@ -57,3 +57,11 @@ runs:
         PASSWORD: ${{ inputs.iq-password }}
         APP_ID: ${{ inputs.iq-app-id }}
         GITHUB_TOKEN: ${{ github.token }}
+
+    - name: 'Upload artifacts'
+      uses: actions/upload-artifact@v4
+      with:
+        name: dependency-trees
+        path: |
+          source-temp/*
+          target-temp/*
