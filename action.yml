@@ -18,27 +18,33 @@ inputs:
   iq-app-id:
     description: 'The Lifecycle (IQ Server) application'
     required: true
-  gh-token:
-    description: 'GitHub token; usually available in every workflow as `secrets.GITHUB_TOKEN`'
-    required: true
 
 runs:
   using: 'composite'
   steps:
-    - name: Detect maven components on the PR branch - ${{ github.head_ref }}
-      id: dependency_tree_step
+    - name: Checkout the PR branch
+      if : ${{ github.head_ref != '' }}
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.head_ref }}
+        path: source-temp
+
+    - name: Detect maven components on the PR branch
+      if : ${{ github.head_ref != '' }}
       shell: bash
       run: |
+        cd source-temp
         mvn -B -q dependency:tree -DoutputType=dot > source-dependency-tree.txt 2>&1
 
-    - name: Checkout target branch - ${{ github.base_ref }}
+    - name: Checkout target branch
+      if : ${{ github.base_ref != '' }}
       uses: actions/checkout@v4
       with:
         ref: ${{ github.base_ref }}
         path: target-temp
 
-    - name: Detect maven components on the target branch - ${{ github.base_ref }}
-      id: target_dependency_tree_step
+    - name: Detect maven components on the target branch
+      if : ${{ github.base_ref != '' }}
       shell: bash
       run: |
         cd target-temp
@@ -50,4 +56,4 @@ runs:
         USERNAME: ${{ inputs.iq-username }}
         PASSWORD: ${{ inputs.iq-password }}
         APP_ID: ${{ inputs.iq-app-id }}
-        GITHUB_TOKEN: ${{ inputs.gh-token }}
+        GITHUB_TOKEN: ${{ github.token }}
