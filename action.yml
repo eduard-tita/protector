@@ -10,13 +10,16 @@ branding:
 # Define your inputs here.
 inputs:
   iq-username:
-    description: 'The username to authenticate with Lifecycle (IQ Server).'
+    description: 'The username to authenticate with Lifecycle (IQ Server)'
     required: true
   iq-password:
-    description: 'The password to authenticate with Lifecycle (IQ Server).'
+    description: 'The password to authenticate with Lifecycle (IQ Server)'
+    required: true
+  iq-app-id:
+    description: 'The Lifecycle (IQ Server) application'
     required: true
   gh-token:
-    description: 'GitHub token; usually available in every workflow as `secrets.GITHUB_TOKEN`.'
+    description: 'GitHub token; usually available in every workflow as `secrets.GITHUB_TOKEN`'
     required: true
 
 runs:
@@ -46,13 +49,13 @@ runs:
       shell: bash
       run: |
         cd target-temp
-        mvn -B dependency:tree -DoutputType=dot > master-dependency-tree.txt 2>&1
+        mvn -B dependency:tree -DoutputType=dot > target-dependency-tree.txt 2>&1
 
     - name: Upload component info for the target branch
       uses: actions/upload-artifact@v4
       with:
-        name: master-dependency-tree-output
-        path: target-temp/master-dependency-tree.txt
+        name: target-dependency-tree-output
+        path: target-temp/target-dependency-tree.txt
         retention-days: 1
 
     - name: Detect PR introduced vulnerabilities
@@ -60,4 +63,5 @@ runs:
       env:
         USERNAME: ${{ inputs.iq-username }}
         PASSWORD: ${{ inputs.iq-password }}
+        APP_ID: ${{ inputs.iq-app-id }}
         GITHUB_TOKEN: ${{ inputs.gh-token }}
