@@ -9,6 +9,9 @@ branding:
 
 # Define your inputs here.
 inputs:
+  iq-url:
+    description: 'The Lifecycle (IQ Server) URL'
+    required: true
   iq-username:
     description: 'The username to authenticate with Lifecycle (IQ Server)'
     required: true
@@ -53,6 +56,7 @@ runs:
     - name: 'Detect PR introduced vulnerabilities'
       uses: eduard-tita/hackaton@main
       env:
+        IQ_URL: ${{ inputs.iq-url }}
         USERNAME: ${{ inputs.iq-username }}
         PASSWORD: ${{ inputs.iq-password }}
         APP_ID: ${{ inputs.iq-app-id }}
