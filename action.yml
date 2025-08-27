@@ -31,12 +31,12 @@ runs:
       run: |
         mvn -B dependency:tree -DoutputType=dot > source-dependency-tree.txt 2>&1
 
-    - name: Upload component info for the PR branch - ${{ github.head_ref }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: source-dependency-tree-output
-        path: source-dependency-tree.txt
-        retention-days: 1
+#    - name: Upload component info for the PR branch - ${{ github.head_ref }}
+#      uses: actions/upload-artifact@v4
+#      with:
+#        name: source-dependency-tree-output
+#        path: source-dependency-tree.txt
+#        retention-days: 1
 
     - name: Checkout target branch - ${{ github.base_ref }}
       uses: actions/checkout@v4
@@ -45,18 +45,18 @@ runs:
         path: target-temp
 
     - name: Detect maven components on the target branch - ${{ github.base_ref }}
-      id: master_dependency_tree_step
+      id: target_dependency_tree_step
       shell: bash
       run: |
         cd target-temp
         mvn -B dependency:tree -DoutputType=dot > target-dependency-tree.txt 2>&1
 
-    - name: Upload component info for the target branch
-      uses: actions/upload-artifact@v4
-      with:
-        name: target-dependency-tree-output
-        path: target-temp/target-dependency-tree.txt
-        retention-days: 1
+#    - name: Upload component info for the target branch
+#      uses: actions/upload-artifact@v4
+#      with:
+#        name: target-dependency-tree-output
+#        path: target-temp/target-dependency-tree.txt
+#        retention-days: 1
 
     - name: Detect PR introduced vulnerabilities
       uses: eduard-tita/hackaton@main
