@@ -22,35 +22,35 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Checkout the PR branch
+    - name: 'Checkout the PR branch'
       if : ${{ github.head_ref != '' }}
       uses: actions/checkout@v4
       with:
         ref: ${{ github.head_ref }}
         path: source-temp
 
-    - name: Detect maven components on the PR branch
+    - name: 'Detect maven components on the PR branch'
       if : ${{ github.head_ref != '' }}
       shell: bash
       run: |
         cd source-temp
         mvn -B dependency:tree -DoutputType=dot > source-dependency-tree.txt 2>&1
 
-    - name: Checkout target branch
+    - name: 'Checkout the target branch'
       if : ${{ github.base_ref != '' }}
       uses: actions/checkout@v4
       with:
         ref: ${{ github.base_ref }}
         path: target-temp
 
-    - name: Detect maven components on the target branch
+    - name: 'Detect maven components on the target branch'
       if : ${{ github.base_ref != '' }}
       shell: bash
       run: |
         cd target-temp
         mvn -B dependency:tree -DoutputType=dot > target-dependency-tree.txt 2>&1
 
-    - name: Detect PR introduced vulnerabilities
+    - name: 'Detect PR introduced vulnerabilities'
       uses: eduard-tita/hackaton@main
       env:
         USERNAME: ${{ inputs.iq-username }}
@@ -58,7 +58,7 @@ runs:
         APP_ID: ${{ inputs.iq-app-id }}
         GITHUB_TOKEN: ${{ github.token }}
 
-    - name: 'Upload artifacts'
+    - name: 'Upload artifacts (for troubleshooting only)'
       uses: actions/upload-artifact@v4
       with:
         name: dependency-trees
